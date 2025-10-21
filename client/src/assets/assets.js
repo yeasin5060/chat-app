@@ -44,7 +44,7 @@ export const imagesDummyData = [pic1, pic2, pic3, pic4, pic1, pic2]
 
 export const userDummyData = [
     {
-        "_id": "680f50aaf10f3cd28382ecf2",
+        "_id": "c",
         "email": "test1@greatstack.dev",
         "fullName": "Alison Martin",
         "profilePic": profile_alison,
