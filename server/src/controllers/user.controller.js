@@ -58,10 +58,48 @@ const signup = async (req , res)=> {
     }
 }
 
+const login = async (req,res) => {
+    try {
+         const {email, password} = req.body;
+         // Validate required fields
+         if(![email , password].some((field)=> field && field.trim())){
+            return res.status(400).json(new ApiError(400, "All fields are required"));
+         }
+
+        //user found
+
+        const userFound = await User.findOne({
+            $or : [{email}]
+        });
+
+        if (!userFound){
+            return res.json(new ApiError(400 , "invalied user"));
+        }
+        const isPasswordCorrect = await userFound.isPasswordCorrect(password);
+
+        if(!isPasswordCorrect){
+            res.json(new ApiError(400 , "invalid password or email"));
+        }
+
+        const {accessToken , refreshToken} = await generatorAccessAndRefreshtoken(userFound);
+       const loginUser = await User.findById(userFound._id).select("-password");
+
+       let options = {
+           secure : true,
+           httpOnly : true
+       };
+
+       res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse (200 , "user login successfully" , {loginUser , accessToken}));
+    } catch (error) {
+        console.error("User login error:", error.message);
+        return res.status(500).json(new ApiError(500, "Internal server error"))
+    }
+}
 
 
 //all controllers export heare
 
 export {
-    signup
+    signup,
+    login
 }
