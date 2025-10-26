@@ -12,6 +12,9 @@ app.use(cors({
     origin : "*"
 }))
 
-        //import all routes
+//import all routes
+import userRoute from './routes/user.route.js'
+
+app.use("/api/v1/user" ,userRoute);
 
 export {app}
