@@ -2,6 +2,7 @@ import { User } from "../models/user.model.js";
 import { ApiError } from "../utils/ApiError.js";
 import bcrypt from "bcryptjs";
 import { ApiResponse } from "../utils/ApiResponse.js";
+import { cloudinaryFileUpload } from "../utils/cloudinary.js";
 
 
 // generator Access And Refreshtoken
@@ -97,9 +98,41 @@ const login = async (req,res) => {
 }
 
 
+//Controller to check if user is authenticated
+
+const checkAuth = async (req , res) => {
+    try {
+        return res.json({success : true , user : req.user});
+    } catch (error) {
+        console.error("checkAuth error:", error.message);
+        return res.status(500).json(new ApiError(500, "the user don't Authenticated"));
+    }
+}
+
+const updateprofile = async (req , res) => {
+    try {
+        const {profilePic , bio , fullName} = req.body;
+        const userId = req.user._id;
+        let updatedUser;
+
+        if(!profilePic){
+            updatedUser = await User.findByIdAndUpdate(userId , {bio , fullName} , {new : true});
+        }else{
+            const upload = await cloudinaryFileUpload( profilePic , 'profilePic');
+            updatedUser = await User.findByIdAndUpdate(userId , { profilePic : upload.secure_url, bio , fullName} , {new : true});
+        }
+        res.json({success : ture , user : updatedUser});
+    } catch (error) {
+        console.log( 'user dont update :', error.message);
+        res.json({success : false , message : error.message});
+    }
+}
+
 //all controllers export heare
 
 export {
     signup,
-    login
+    login,
+    checkAuth,
+    updateprofile
 }
