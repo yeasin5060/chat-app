@@ -21,7 +21,7 @@ const getUsersForSidebar = async (req ,res) => {
     } catch (error){ 
         console.log('getUserForSidebar error :', error.message);
         
-         res.json({success : false, message : error.message})
+        res.json({success : false, message : error.message})
     }
 }
 
@@ -29,14 +29,25 @@ const getUsersForSidebar = async (req ,res) => {
 
 const getMessage = async (req ,res) => {
     try {
-        
+        const {id : selectedUserId} = req.params;
+        const myId = req.user._id;
+        const messages = await Message.find({
+            $or : [
+                {senderId : myId , receiverId : selectedUserId},
+                {senderId : selectedUserId , receiverId : myId}
+            ]
+        });
+        await Message.updateMany({senderId : selectedUserId , receiverId : myId} , {seen : true});
+        res.json({success : false, messages})
     } catch (error) {
-        
+        console.log('getMessage error :', error.message);
+        res.json({success : false, message : error.message})
     }
 }
 
 // all controller export heare 
 
 export {
-    getUsersForSidebar
+    getUsersForSidebar,
+    getMessage
 }
