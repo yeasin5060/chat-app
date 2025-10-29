@@ -70,6 +70,13 @@ const sendMessage = async (req ,res) =>{
             const uploadResponse = await cloudinaryFileUpload(image , 'sendImg');
             imageUrl = uploadResponse.secure_url;
         }
+        const newMessage = await Message.create({
+            senderId , 
+            receiverId,
+            text,
+            image : imageUrl
+        });
+        res.json({success : true , message : newMessage});
     } catch (error) {
         console.log('sendMessage error :' , error.message);
         res.json({success : false, messages : error.message});
