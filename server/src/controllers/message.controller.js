@@ -3,6 +3,7 @@
 
 import { Message } from "../models/message.model.js";
 import { User } from "../models/user.model.js";
+import { cloudinaryFileUpload } from "../utils/cloudinary.js";
 
 const getUsersForSidebar = async (req ,res) => {
     try {
@@ -57,10 +58,29 @@ const markMessageAsSeen = async (req , res) => {
     }
 }
 
+//send message to selected user
+const sendMessage = async (req ,res) =>{
+    try {
+        const {text , image} = req.body;
+        const receiverId = req.params.id;
+        const senderId = req.user._id;
+
+        let imageUrl;
+        if(image){
+            const uploadResponse = await cloudinaryFileUpload(image , 'sendImg');
+            imageUrl = uploadResponse.secure_url;
+        }
+    } catch (error) {
+        console.log('sendMessage error :' , error.message);
+        res.json({success : false, messages : error.message});
+    }
+}
+
 // all controller export heare 
 
 export {
     getUsersForSidebar,
     getMessage,
-    markMessageAsSeen
+    markMessageAsSeen,
+    sendMessage
 }
