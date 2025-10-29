@@ -13,8 +13,10 @@ app.use(cors({
 }))
 
 //import all routes
-import userRoute from './routes/user.route.js'
+import userRoute from './routes/user.route.js';
+import messageRoute from './routes/message.route.js';
 
 app.use("/api/v1/user" ,userRoute);
+app.use("/api/v1/message" ,messageRoute);
 
 export {app}
