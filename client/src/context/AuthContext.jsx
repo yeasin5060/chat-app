@@ -13,6 +13,11 @@ export const AuthProvaider = ({children})=>{
     const [authUser , setAuthUser] = useState(null);
     const [onlineUsers , setOnlineUsers] = useState([]);
     const [socket , setSocket] = useState(null);
+    console.log(authUser);
+    console.log(token);
+
+    
+    
 
     // check if user is authenticated and if so ,set the user data and connect the socket
     const checkAuth = async ()=> {
@@ -30,13 +35,14 @@ export const AuthProvaider = ({children})=>{
     const login = async (state , credentials)=>{
         try {
             const {data} = await axios.post(`/api/v1/user/${state}`, credentials);
-            if(data.success){
-                setAuthUser(data.user);
-                connectSocket(data.user);
-                axios.defaults.headers.common['token'] = data.token;
-                setToken(data.token);
-                localStorage.setItem('token' , data.token);
+            if(data.statuscode){
+                setAuthUser(data);
+                connectSocket(data);
+                axios.defaults.headers.common['token'] = data.data.accessToken;
+                setToken(data.data.accessToken);
+                localStorage.setItem('token' , data.data.accessToken);
                 toast.success(data.message);
+                console.log(data.data.accessToken);
             }else{
                 toast.error(data.message);
             }
@@ -44,7 +50,7 @@ export const AuthProvaider = ({children})=>{
             toast.error(error.message)
         }
     }
-
+    console.log(token);
     //logout function to handle user logout and disconnection
     const logout = async ()=>{
         try {
@@ -75,7 +81,7 @@ export const AuthProvaider = ({children})=>{
 
     //connect socket function to handle socket connection and online users updates
 
-    const connectSocket = (userData)=>{
+    /*const connectSocket = (userData)=>{
         if(!userData || socket?.connected) return;
         const newSocket = io(backendUrl , {
             query : {
@@ -87,7 +93,7 @@ export const AuthProvaider = ({children})=>{
         newSocket.on('getOnlineUser' , (userIds)=>{
             setOnlineUsers(userIds);
         })
-    }
+    }*/
 
     useEffect(()=>{
         if(token){

@@ -52,9 +52,15 @@ const signup = async (req , res)=> {
             return res.status(400).json(new ApiError(400, "Invalid user"));
         }
 
-        return res.status(201).json(new ApiResponse(201, "User created successfully", createUser));
+         const {accessToken , refreshToken} = await generatorAccessAndRefreshtoken(createUser);
+          let options = {
+           secure : true,
+           httpOnly : true
+       };
+
+        return res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse(201, "User created successfully", {createUser , accessToken}));
     } catch (error) {
-        console.error("User creation error:", error.message);
+        console.log("User creation error:", error.message);
         return res.status(500).json(new ApiError(500, "Internal server error"));
     }
 }
@@ -82,17 +88,11 @@ const login = async (req,res) => {
             res.json(new ApiError(400 , "invalid password or email"));
         }
 
-        const {accessToken , refreshToken} = await generatorAccessAndRefreshtoken(userFound);
        const loginUser = await User.findById(userFound._id).select("-password");
 
-       let options = {
-           secure : true,
-           httpOnly : true
-       };
-
-       res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse (200 , "user login successfully" , {loginUser , accessToken}));
+       res.json(new ApiResponse (200 , "user login successfully" ,loginUser));
     } catch (error) {
-        console.error("User login error:", error.message);
+        console.log("User login error:", error.message);
         return res.status(500).json(new ApiError(500, "Internal server error"))
     }
 }
@@ -104,7 +104,7 @@ const checkAuth = async (req , res) => {
     try {
         return res.json({success : true , user : req.user});
     } catch (error) {
-        console.error("checkAuth error:", error.message);
+        console.log("checkAuth error:", error.message);
         return res.status(500).json(new ApiError(500, "the user don't Authenticated"));
     }
 }
