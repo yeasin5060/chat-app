@@ -5,11 +5,13 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { cloudinaryFileUpload } from "../utils/cloudinary.js";
 
 
+
 // generator Access And Refreshtoken
   const generatorAccessAndRefreshtoken = async (user) =>{
     try {
         const accessToken = await user.generatorAccessToken();
         const refreshToken = await user.generatorRefreshToken();
+        user.accessToken = accessToken;
         user.refreshToken = refreshToken;
         await user.save();
 
@@ -58,7 +60,7 @@ const signup = async (req , res)=> {
            httpOnly : true
        };
 
-        return res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse(201, "User created successfully", {createUser , accessToken}));
+        return res.cookie("accessToken" , accessToken , options).cookie("refreshToken" , refreshToken , options).json(new ApiResponse(201, "User created successfully", createUser));
     } catch (error) {
         console.log("User creation error:", error.message);
         return res.status(500).json(new ApiError(500, "Internal server error"));
@@ -119,6 +121,8 @@ const updateprofile = async (req , res) => {
             updatedUser = await User.findByIdAndUpdate(userId , {bio , fullName} , {new : true});
         }else{
             const upload = await cloudinaryFileUpload( profilePic , 'profilePic');
+            console.log(upload);
+            
             updatedUser = await User.findByIdAndUpdate(userId , { profilePic : upload.secure_url, bio , fullName} , {new : true});
         }
         res.json({success : ture , user : updatedUser});

@@ -4,7 +4,7 @@ import { ApiError } from '../utils/ApiError.js';
     //
 export const auth = async (req , res , next) => {
     try {
-        const token = req.headers.token
+        const token =  req.cookie?.accessToken || req.header("Authorization")?.replace("Bearer " , "");
         if(!token){
            return res.json(new ApiError(401 , "unauthorized access"));
         };

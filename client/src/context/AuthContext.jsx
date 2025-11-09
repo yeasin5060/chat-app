@@ -13,9 +13,8 @@ export const AuthProvaider = ({children})=>{
     const [authUser , setAuthUser] = useState(null);
     const [onlineUsers , setOnlineUsers] = useState([]);
     const [socket , setSocket] = useState(null);
-    console.log(authUser);
-    console.log(token);
 
+    console.log(token);
     
     
 
@@ -34,23 +33,23 @@ export const AuthProvaider = ({children})=>{
     // login function to handle user authentication and socket connection
     const login = async (state , credentials)=>{
         try {
-            const {data} = await axios.post(`/api/v1/user/${state}`, credentials);
+            const {data} = await axios.post(`/api/v1/user/${state}`, credentials ,{headers : {Authorization : `Bearer ${await token}`}});
+            console.log(data);
+            console.log(data.data.refreshToken);
             if(data.statuscode){
+                axios.defaults.headers.common['token'] = data.data.refreshToken;
+                setToken(data.data.refreshToken);
+                localStorage.setItem('token' , data.data.refreshToken);
                 setAuthUser(data);
                 connectSocket(data);
-                axios.defaults.headers.common['token'] = data.data.accessToken;
-                setToken(data.data.accessToken);
-                localStorage.setItem('token' , data.data.accessToken);
-                toast.success(data.message);
-                console.log(data.data.accessToken);
+                toast.success(data.data.message);
             }else{
-                toast.error(data.message);
+                toast.error(data.data.message);
             }
         } catch (error) {
             toast.error(error.message)
         }
     }
-    console.log(token);
     //logout function to handle user logout and disconnection
     const logout = async ()=>{
         try {
@@ -70,6 +69,7 @@ export const AuthProvaider = ({children})=>{
     const updateProfile = async (body)=>{
         try {
             const {data} = await axios.put('/api/v1/user/update-profile' , body);
+            console.log(data);
             if(data.success){
                 setAuthUser(data.user);
                 toast.success('profile update successfully')
