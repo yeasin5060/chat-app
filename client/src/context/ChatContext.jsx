@@ -86,7 +86,7 @@ export const ChatProvider = ({children})=> {
         return ()=> unsubscribeFromMessage();
     },[socket , selectedUser])
     const value = {
-        message , setMessage , uaers , selectedUser , setSelectedUser , getMessage , sendMessage , unseenMessage , setUnseenMessage
+        message , setMessage ,getUser, uaers , selectedUser , setSelectedUser , getMessage , sendMessage , unseenMessage , setUnseenMessage
     }
     return (
         <ChatContext.Provider value={value}>
