@@ -30,7 +30,7 @@ const RightSidebar = () => {
           <p>media</p>
           <div className='mt-2 max-h-[200px] overflow-y-scroll grid grid-cols-2 gap-4 opacity-80'>
             {
-              imagesDummyData.map((url , index)=>(
+              msgImages.map((url , index)=>(
                 <div className='cursor-pointer rounded' key={index} onClick={()=> window.open(url)}>
                   <img className='h-full rounded-md' src={url} alt="" />
                 </div>
@@ -38,7 +38,7 @@ const RightSidebar = () => {
             }
           </div>
         </div>
-        <div className='bottom-5 absolute left-1/2 transfrom -translate-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white broder-none text-sm font-light py-2 px-20 rounded-full cursor-pointer capitalize'>
+        <div onClick={()=> logout()} className='bottom-5 absolute left-1/2 transfrom -translate-x-1/2 bg-gradient-to-r from-purple-400 to-violet-600 text-white broder-none text-sm font-light py-2 px-20 rounded-full cursor-pointer capitalize'>
             logout
         </div>
     </div>

@@ -51,8 +51,8 @@ const ChatContainer = () => {
       <div className='flex items-center gap-3 py-3 mx-4 border-b border-stone-500'>
         <img className='w-8 rounded-full' src={assets.profile_martin} alt="profile martin" />
         <p className='flex-1 text-lg text-white flex items-center gap-2 capitalize'>
-          martin jonson
-          <span className='w-2 h-2 rounded-full bg-green-500'></span>
+          {selectedUser.fullName}
+          {onlineUsers.includes(selectedUser.id) && <span className='w-2 h-2 rounded-full bg-green-500'></span>}
         </p>
         <img onClick={()=> selectedUser(null)} className='md:hidden max-w-7' src={assets.arrow_icon} alt="arrow icon" />
         <img className='md:hidden max-w-5' src={assets.help_icon} alt="arrow icon" />
